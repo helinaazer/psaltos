@@ -1,16 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "semantic-ui-react";
 import "./AudioPlayer.css";
 //Instal react icon library by running 'npm install react-icons' in terminal
 //Install react responsive library by running 'npm i -S react-responsive' in terminal
 //import { useMediaQuery } from "react-responsive";
-import {GrForwardTen} from "react-icons/gr";
-import {GrBackTen} from "react-icons/gr";
+import { GrForwardTen } from "react-icons/gr";
+import { GrBackTen } from "react-icons/gr";
 import { AiFillPauseCircle } from "react-icons/ai";
 import { AiFillPlayCircle } from "react-icons/ai";
 
-
-const AudioPlayer = ({src}) => {
+const AudioPlayer = ({ src }) => {
   //state
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -30,45 +29,18 @@ const AudioPlayer = ({src}) => {
   }, [audioPlayer?.current?.loadedmetadata, audioPlayer?.current?.readyState]);
 
   useEffect(() => {
-    audioPlayer.current.playbackRate = playbackRate;},
-    [playbackRate]);
+    audioPlayer.current.playbackRate = playbackRate;
+  }, [playbackRate]);
 
   const setPlayBack = (e) => {
     setPlaybackRate(e.target.value);
   };
 
-  //---------------------------Added New---------------------------
-  // useEffect(() => {
-  //   if (currentTime === duration) {
-  //     togglePlayPause();
-  //     timeTravel(0);
-  //   }
-  // }, [currentTime]);
-
-  //   // useEffect(() => {
-  //   //   if (timeJump) {
-  //   //     timeTravel(timeJump);
-  //   //     setIsPlaying(true);
-  //   //     play();
-  //   //   } else {
-  //   //     timeTravel(0);
-  //   //   }
-  //   // }, [timeJump]);
-
-  //   const play = () => {
-  //     audioPlayer.current.play();
-  //     animationRef.current = requestAnimationFrame(whilePlaying);
-  //   };
-
-    
-
-  //-----------------------------------------------------------------
-
   const calculateTime = (secs) => {
     console.log(secs);
     //if statement added so that Nan:NaN would not show
     if (isNaN(secs)) {
-      return "";
+      return "    ";
     }
     const minutes = Math.floor(secs / 60);
     const returnMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
@@ -77,35 +49,29 @@ const AudioPlayer = ({src}) => {
     return `${returnMinutes}:${returnSeconds}`;
   };
 
-  //--------------------------------Added New--------------------------
-  // const togglePlayPause = () => {
-  //   const prevValue = isPlaying;
-  //   setIsPlaying(!prevValue);
-  //   if (!prevValue) {
-  //     play();
-  //   } else {
-  //     audioPlayer.current.pause();
-  //     cancelAnimationFrame(animationRef.current);
-  //   }
-  // };
-  //--------------------------------------------------------------------
-
-    const togglePlayPause = () => {
-      const prevValue = isPlaying;
-      setIsPlaying(!prevValue);
-      if (!prevValue) {
-        audioPlayer.current.play();
-        animationRef.current = requestAnimationFrame(whilePlaying);
-      } else {
-        audioPlayer.current.pause();
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
+  const togglePlayPause = () => {
+    const prevValue = isPlaying;
+    setIsPlaying(!prevValue);
+    if (!prevValue) {
+      audioPlayer.current.play();
+      animationRef.current = requestAnimationFrame(whilePlaying);
+    } else {
+      audioPlayer.current.pause();
+      cancelAnimationFrame(animationRef.current);
+    }
+  };
 
   const whilePlaying = () => {
     progressBar.current.value = audioPlayer.current.currentTime;
     changePlayerCurrentTime();
     animationRef.current = requestAnimationFrame(whilePlaying);
+
+    if (Math.floor(audioPlayer.current.currentTime) === duration)
+    {
+      // console.log("is verena");
+      // togglePlayPause();
+      setIsPlaying(false);
+    }
   };
 
   const changeRange = () => {
@@ -114,15 +80,14 @@ const AudioPlayer = ({src}) => {
   };
 
   const changePlayerCurrentTime = () => {
-    console.log("I AM HERE" + duration);
-    progressBar.current.style.setProperty('--seek-before-width', 'Helina')
+    progressBar.current.style.setProperty("--seek-before-width", "Helina");
     // progressBar.current.style.setProperty('--seek-before-width',`${(progressBar.current.value / duration) * 100}%`)
     setCurrentTime(progressBar.current.value);
   };
 
   const backTen = () => {
     progressBar.current.value = Number(progressBar.current.value) - 10;
-    changeRange();;
+    changeRange();
   };
 
   const forwardTen = () => {
@@ -130,13 +95,7 @@ const AudioPlayer = ({src}) => {
     changeRange();
   };
 
-  //---------------------------Added New---------------------------
-  // const timeTravel = (newTime) => {
-  //   progressBar.current.value = newTime;
-  //   changeRange();
-  // };
-  //---------------------------------------------------------------
-
+  
   return (
     <div className="audioPlayer">
       <audio ref={audioPlayer} src={src} preload="metadata" />
@@ -169,7 +128,13 @@ const AudioPlayer = ({src}) => {
         />
       </form> */}
 
-      <select className="playBack" defaultValue="1" onChange={setPlayBack} value={playbackRate}>
+      <select
+        className="playBack"
+        defaultValue="1"
+        onChange={setPlayBack}
+        value={playbackRate}
+        style={{ width: "100px" }}
+      >
         <option value="0.25">0.25 x</option>
         <option value="0.5">0.5 x</option>
         <option value="0.75">0.75 x</option>
@@ -200,6 +165,9 @@ const AudioPlayer = ({src}) => {
       </div>
     </div>
   );
-}
 
-export { AudioPlayer }
+
+
+};
+
+export { AudioPlayer };
